@@ -9,30 +9,23 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 public class Bot extends TelegramLongPollingBot {
 
     private static final Logger log = Logger.getLogger(Bot.class);
     private static final ReadProperties prop = new ReadProperties();
 
+    public final Queue<Object> sendQueue = new ConcurrentLinkedQueue<>();
+    public final Queue<Object> receiveQueue = new ConcurrentLinkedQueue<>();
+
     final int RECONNECT_PAUSE = 10000;
 
     @Override
     public void onUpdateReceived(Update update) {
-        log.debug("Receive new update. UpdateID: " + update.getUpdateId());
-
-        Long chatId = update.getMessage().getChatId();
-        String inputText = update.getMessage().getText();
-
-        if (inputText.startsWith("/start")) {
-            SendMessage message = new SendMessage();
-            message.setChatId(chatId);
-            message.setText("Hello. This is a start message");
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }
+        log.debug("Receive new Update. updateID: " + update.getUpdateId());
+        receiveQueue.add(update);
     }
 
     @Override

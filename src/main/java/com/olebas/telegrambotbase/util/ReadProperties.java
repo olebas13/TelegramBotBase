@@ -34,4 +34,8 @@ public class ReadProperties {
     public String getBotToken() {
         return prop.getProperty("BOT_TOKEN");
     }
+
+    public String getBotAdmin() {
+        return prop.getProperty("BOT_ADMIN");
+    }
 }

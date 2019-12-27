@@ -52,6 +52,10 @@ public class MessageSender implements Runnable {
                     SendSticker sendSticker = (SendSticker) object;
                     log.debug("Use SendSticker for " + object);
                     bot.execute(sendSticker);
+                case NOT_DETECTED:
+                    break;
+                default:
+                    log.warn("Cant detect type of object. " + object);
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();

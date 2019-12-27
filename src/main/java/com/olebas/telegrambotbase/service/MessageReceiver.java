@@ -1,9 +1,15 @@
 package com.olebas.telegrambotbase.service;
 
 import com.olebas.telegrambotbase.bot.Bot;
+import com.olebas.telegrambotbase.command.Command;
 import com.olebas.telegrambotbase.command.ParsedCommand;
 import com.olebas.telegrambotbase.command.Parser;
+import com.olebas.telegrambotbase.handler.AbstractHandler;
+import com.olebas.telegrambotbase.handler.DefaultHandler;
+import com.olebas.telegrambotbase.handler.NotifyHandler;
+import com.olebas.telegrambotbase.handler.SystemHandler;
 import org.apache.log4j.Logger;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class MessageReceiver implements Runnable {
@@ -56,5 +62,38 @@ public class MessageReceiver implements Runnable {
         String inputText = update.getMessage().getText();
 
         ParsedCommand parsedCommand = parser.getParsedCommand(inputText);
+        AbstractHandler handlerForCommand = getHandlerForCommand(parsedCommand.getCommand());
+
+        String operationResult = handlerForCommand.operate(chatId.toString(), parsedCommand, update);
+
+        if (!"".equals(operationResult)) {
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setChatId(chatId);
+            sendMessage.setText(operationResult);
+            bot.sendQueue.add(sendMessage);
+        }
+    }
+
+    private AbstractHandler getHandlerForCommand(Command command) {
+        if (command == null) {
+            log.warn("Null command accepted. This is not good scenario.");
+            return new DefaultHandler(bot);
+        }
+
+        switch (command) {
+            case START:
+            case HELP:
+            case ID:
+                SystemHandler systemHandler = new SystemHandler(bot);
+                log.info("Handler for command [" + command.toString() + "] is: " + systemHandler);
+                return systemHandler;
+            case NOTIFY:
+                NotifyHandler notifyHandler = new NotifyHandler(bot);
+                log.info("Handler for command [" + command.toString() + "] is: " + notifyHandler);
+                return notifyHandler;
+            default:
+                log.info("Handler for command [" + command.toString() + "] not Set. Return DefaultHandler");
+                return new DefaultHandler(bot);
+        }
     }
 }

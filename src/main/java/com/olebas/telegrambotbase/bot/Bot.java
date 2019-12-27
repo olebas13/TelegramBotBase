@@ -30,12 +30,12 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "olebas_bot";
+        return prop.getBotUsername();
     }
 
     @Override
     public String getBotToken() {
-        return "1046997624:AAG7-hGPSomDtT0i1ztDSOMCht2YHTrt3PM";
+        return prop.getBotToken();
     }
 
     public void botConnect() {

@@ -3,7 +3,6 @@ package com.olebas.telegrambotbase;
 import com.olebas.telegrambotbase.bot.Bot;
 import com.olebas.telegrambotbase.service.MessageReceiver;
 import com.olebas.telegrambotbase.service.MessageSender;
-import com.olebas.telegrambotbase.util.ReadProperties;
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,7 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 public class App {
 
     private static final Logger log = Logger.getLogger(App.class);
-    private static final ReadProperties prop = new ReadProperties();
     private static final int PRIORITY_FOR_SENDER = 1;
     private static final int PRIORITY_FOR_RECEIVER = 3;
 
@@ -41,7 +39,7 @@ public class App {
 
     private static void sendStartReport(Bot bot) {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(prop.getBotAdmin());
+        sendMessage.setChatId(System.getenv("BOT_ADMIN"));
         sendMessage.setText("STARTED!");
         bot.sendQueue.add(sendMessage);
     }

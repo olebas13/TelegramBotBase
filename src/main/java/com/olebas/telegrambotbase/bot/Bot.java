@@ -1,12 +1,9 @@
 package com.olebas.telegrambotbase.bot;
 
-import com.olebas.telegrambotbase.util.ReadProperties;
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 import java.util.Queue;
@@ -15,7 +12,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class Bot extends TelegramLongPollingBot {
 
     private static final Logger log = Logger.getLogger(Bot.class);
-    private static final ReadProperties prop = new ReadProperties();
 
     public final Queue<Object> sendQueue = new ConcurrentLinkedQueue<>();
     public final Queue<Object> receiveQueue = new ConcurrentLinkedQueue<>();
@@ -30,12 +26,12 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return prop.getBotUsername();
+        return System.getenv("BOT_USERNAME");
     }
 
     @Override
     public String getBotToken() {
-        return prop.getBotToken();
+        return System.getenv("BOT_TOKEN");
     }
 
     public void botConnect() {

@@ -100,7 +100,7 @@ public class MessageReceiver implements Runnable {
                 log.info("Handler for command[" + command.toString() + "] is: " + systemHandler);
                 return systemHandler;
             case ID:
-                SystemHandler systemHandler = new SystemHandler(bot);
+                systemHandler = new SystemHandler(bot);
                 log.info("Handler for command [" + command.toString() + "] is: " + systemHandler);
                 return systemHandler;
             case NOTIFY:

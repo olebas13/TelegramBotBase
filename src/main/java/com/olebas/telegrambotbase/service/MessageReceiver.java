@@ -10,7 +10,9 @@ import com.olebas.telegrambotbase.handler.NotifyHandler;
 import com.olebas.telegrambotbase.handler.SystemHandler;
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.stickers.Sticker;
 
 public class MessageReceiver implements Runnable {
 
@@ -58,10 +60,20 @@ public class MessageReceiver implements Runnable {
     }
 
     private void analyzeForUpdateType(Update update) {
+        Message message = update.getMessage();
         Long chatId = update.getMessage().getChatId();
-        String inputText = update.getMessage().getText();
 
-        ParsedCommand parsedCommand = parser.getParsedCommand(inputText);
+        ParsedCommand parsedCommand = new ParsedCommand(Command.NONE, "");
+
+        if (message.hasText()) {
+            parsedCommand = parser.getParsedCommand(message.getText());
+        } else {
+            Sticker sticker = message.getSticker();
+            if (sticker != null) {
+                parsedCommand = new ParsedCommand(Command.STICKER, sticker.getFileId());
+            }
+        }
+
         AbstractHandler handlerForCommand = getHandlerForCommand(parsedCommand.getCommand());
 
         String operationResult = handlerForCommand.operate(chatId.toString(), parsedCommand, update);
@@ -83,6 +95,10 @@ public class MessageReceiver implements Runnable {
         switch (command) {
             case START:
             case HELP:
+            case STICKER:
+                SystemHandler systemHandler = new SystemHandler(bot);
+                log.info("Handler for command[" + command.toString() + "] is: " + systemHandler);
+                return systemHandler;
             case ID:
                 SystemHandler systemHandler = new SystemHandler(bot);
                 log.info("Handler for command [" + command.toString() + "] is: " + systemHandler);

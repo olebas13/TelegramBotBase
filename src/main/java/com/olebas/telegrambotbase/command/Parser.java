@@ -1,7 +1,10 @@
 package com.olebas.telegrambotbase.command;
 
+import com.vdurmont.emoji.EmojiParser;
 import javafx.util.Pair;
 import org.apache.log4j.Logger;
+
+import java.util.List;
 
 public class Parser {
 
@@ -38,6 +41,13 @@ public class Parser {
             } else {
                 result.setCommand(Command.NOTFORME);
                 result.setText(commandAndText.getValue());
+            }
+        }
+
+        if (result.getCommand() == Command.NONE) {
+            List<String> emojiContainsInText = EmojiParser.extractEmojis(result.getText());
+            if (emojiContainsInText.size() > 0) {
+                result.setCommand(Command.TEXT_CONTAIN_EMOJI);
             }
         }
         return result;

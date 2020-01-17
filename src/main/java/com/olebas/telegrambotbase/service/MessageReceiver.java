@@ -4,10 +4,8 @@ import com.olebas.telegrambotbase.bot.Bot;
 import com.olebas.telegrambotbase.command.Command;
 import com.olebas.telegrambotbase.command.ParsedCommand;
 import com.olebas.telegrambotbase.command.Parser;
-import com.olebas.telegrambotbase.handler.AbstractHandler;
-import com.olebas.telegrambotbase.handler.DefaultHandler;
-import com.olebas.telegrambotbase.handler.NotifyHandler;
-import com.olebas.telegrambotbase.handler.SystemHandler;
+import com.olebas.telegrambotbase.handler.*;
+import com.vdurmont.emoji.EmojiManager;
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -95,6 +93,10 @@ public class MessageReceiver implements Runnable {
         switch (command) {
             case START:
             case HELP:
+            case TEXT_CONTAIN_EMOJI:
+                EmojiHandler emojiHandler = new EmojiHandler(bot);
+                log.info("Handler for command[" + command.toString() + "] is: " + emojiHandler);
+                return emojiHandler;
             case STICKER:
                 SystemHandler systemHandler = new SystemHandler(bot);
                 log.info("Handler for command[" + command.toString() + "] is: " + systemHandler);
